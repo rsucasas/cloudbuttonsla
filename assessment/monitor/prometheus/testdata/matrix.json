@@ -1,0 +1,44 @@
+{
+  "status": "success",
+  "data": {
+    "resultType": "matrix",
+    "result": [
+      {
+        "metric": {
+          "__name__": "prometheus_http_response_size_bytes_count",
+          "handler": "/api/v1/label/:name/values",
+          "instance": "localhost:9090",
+          "job": "prometheus"
+        },
+        "values": [
+          [
+            1572339600,
+            "3"
+          ],
+          [
+            1572339660,
+            "4"
+          ]
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "prometheus_http_response_size_bytes_count",
+          "handler": "/api/v1/query",
+          "instance": "localhost:9090",
+          "job": "prometheus"
+        },
+        "values": [
+          [
+            1572339600,
+            "66"
+          ],
+          [
+            1572339660,
+            "67"
+          ]
+        ]
+      }
+    ]
+  }
+}

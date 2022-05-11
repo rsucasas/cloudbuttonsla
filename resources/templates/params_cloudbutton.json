@@ -1,0 +1,11 @@
+{
+    "template_id": "cloudbutton_cloudbutton",
+    "parameters": {
+        "agreementname": "All constraints must meet",
+        "provider": { "id": "a-provider", "name": "A provider" },
+        "client": { "id": "a-client", "name": "A client" },
+        "UNITCOST": 0.00017,
+        "MAXCOST": 15000,
+        "TFACTOR": 8
+    }
+}

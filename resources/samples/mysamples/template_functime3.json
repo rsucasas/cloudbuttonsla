@@ -1,0 +1,26 @@
+{
+    "id": "t-sla3",
+    "name": "Template sla3",
+    "state": "started",
+    "details":{
+        "id": "t-sla3",
+        "type": "template",
+        "name": "{{.agreementname}}",
+        "provider": { "id": "{{.provider.id}}", "name": "{{.provider.name}}" },
+        "client": { "id": "{{.client.id}}", "name": "{{.client.name}}" },
+        "creation": "2020-01-01T17:09:45Z",
+        "expiration": "2022-01-01T17:09:45Z",
+        "variables": [
+            {
+                "name": "notEnded",
+                "metric": "function_start%20unless%20on(exported_instance,call_id,function_name,job_id)function_end"
+            }
+        ],
+        "guarantees": [
+            {
+                "name": "tooLong",
+                "constraint": "timeNow() - notEnded < {{.TIME}}"
+            }
+        ]
+    }
+}

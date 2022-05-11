@@ -1,0 +1,7 @@
+{
+    "template_id": "t-cpu",
+    "parameters": {
+        "agreementname": "SLA CPU",
+        "CPU": 90
+    }
+}

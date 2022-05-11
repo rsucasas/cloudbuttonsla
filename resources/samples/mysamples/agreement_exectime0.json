@@ -1,0 +1,26 @@
+{
+    "id": "a2",
+    "name": "an-agreement-name",
+    "state": "started",
+    "details":{
+        "id": "a2",
+        "type": "agreement",
+        "name": "an-agreement-name",
+        "provider": { "id": "a-provider", "name": "A provider" },
+        "client": { "id": "a-client", "name": "A client" },
+        "creation": "2020-01-01T17:09:45Z",
+        "expiration": "2022-01-01T17:09:45Z",
+        "variables": [
+            {
+                "name": "start_time",
+                "metric": "kube_pod_start_time{namespace=\"default\"}" 
+            }
+        ],
+        "guarantees": [
+            {
+                "name": "ExecTime",
+                "constraint": "timeNow() - startTime < 30"
+            }
+        ]
+    }
+}

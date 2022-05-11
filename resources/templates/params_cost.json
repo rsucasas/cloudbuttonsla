@@ -1,0 +1,10 @@
+{
+    "template_id": "cloudbutton_tooCostly",
+    "parameters": {
+        "agreementname": "Total cost of the instance in IBM cloud must be limited",
+        "provider": { "id": "a-provider", "name": "A provider" },
+        "client": { "id": "a-client", "name": "A client" },
+        "UNITCOST": 0.00017,
+        "MAXCOST": 15000
+    }
+}

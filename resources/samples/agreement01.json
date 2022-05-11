@@ -1,0 +1,19 @@
+{
+    "id": "a01",
+    "name": "Agreement 01",
+    "state": "started",
+    "details":{
+        "id": "a01",
+        "type": "agreement",
+        "name": "Agreement 01",
+        "provider": { "id": "mf2c", "name": "mF2C Platform" },
+        "client": { "id": "c02", "name": "A client" },
+        "creation": "2018-01-16T17:09:45.0Z",
+        "guarantees": [
+            {
+                "name": "TestGuarantee",
+                "constraint": "m < 0.5 && n < 0.5"
+            }
+        ]
+    }
+}

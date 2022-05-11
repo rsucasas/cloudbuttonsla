@@ -1,0 +1,590 @@
+swagger: '2.0'
+info:
+  version: 0.1.1
+  title: SLA Framework REST API
+  description: The SLA Framework REST API is responsible for the management of SLAs
+schemes:
+- http
+host: 77.231.202.2:8090
+basePath: ""
+
+tags:
+- name: agreements
+  description: 'SLAs management'
+- name: providers
+  description: 'Providers information'
+- name: templates
+  description: 'Templates management'  
+  
+paths:
+          
+# providers ##########################
+
+  "/providers":
+    get:
+      tags:
+      - providers
+      description: Returns providers
+      summary: Returns all providers
+      operationId: getAllProviders
+      produces:
+      - application/json
+      responses:
+        '200':
+          description: providers
+    post:
+      tags:
+      - providers
+      description: Creates a new provider
+      summary: Creates a new provider
+      operationId: createProvider
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: provider
+        required: true
+        schema:
+          "$ref": "#/definitions/Provider"
+      responses:
+        '200':
+          description: provider Created
+          schema:
+            "$ref": "#/definitions/Provider"
+        '400':
+          description: Bad Request
+  "/providers/{id}":
+    get:
+      tags:
+      - providers
+      description: Returns a provider
+      summary: Returns a provider
+      operationId: getprovider
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        description: provider ID
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+          description: App get
+          schema:
+            "$ref": "#/definitions/Provider"
+        '400':
+          description: Bad Request
+        '404':
+          description: provider Not Found
+    delete:
+      tags:
+      - providers
+      description: Deletes a provider
+      summary: Deletes a provider
+      operationId: deleteprovider
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        description: provider ID
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+          description: App get
+          schema:
+            "$ref": "#/definitions/Provider"
+        '400':
+          description: Bad Request
+        '404':
+          description: App Not Found
+
+# agreements ##########################
+
+  "/agreements":
+    get:
+      tags:
+      - agreements
+      description: Returns agreements
+      summary: Returns all agreements
+      operationId: getAllagreements
+      produces:
+      - application/json
+      responses:
+        '200':
+          description: agreements
+    post:
+      tags:
+      - agreements
+      description: Creates an agreement
+      summary: Creates an agreement
+      operationId: createagreement
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: agreement
+        required: true
+        schema:
+          "$ref": "#/definitions/Agreement"
+      responses:
+        '200':
+          description: Agreement Created
+          schema:
+            "$ref": "#/definitions/Agreement"
+        '400':
+          description: Bad Request
+  "/agreements/{id}":
+    get:
+      tags:
+      - agreements
+      description: Returns an Agreement
+      summary: Returns an Agreement
+      operationId: getAgreement
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        description: Agreement ID
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+          description: Agreement get
+          schema:
+            "$ref": "#/definitions/Agreement"
+        '400':
+          description: Bad Request
+        '404':
+          description: Agreement Not Found
+    delete:
+      tags:
+      - agreements
+      description: Deletes an Agreement
+      summary: Deletes an Agreement
+      operationId: deleteAgreement
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        description: Agreement ID
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+          description: Agreement delete
+          schema:
+            "$ref": "#/definitions/Agreement"
+        '400':
+          description: Bad Request
+        '404':
+          description: Agreement Not Found
+    patch:
+      tags:
+      - agreements
+      description: Updates (stop, start, terminate) an Agreement
+      summary: Updates (stop, start, terminate) an agreement
+      operationId: patchAgreement
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        description: Agreement ID
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+          description: Agreement get
+          schema:
+            "$ref": "#/definitions/Agreement"
+        '400':
+          description: Bad Request
+        '404':
+          description: Agreement Not Found
+  "/agreements/{id}/details":
+    get:
+      tags:
+      - agreements
+      description: Returns an Agreement
+      summary: Returns an Agreement
+      operationId: getAgreementDetails
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        description: Agreement ID
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+          description: Agreement get
+          schema:
+            "$ref": "#/definitions/Agreement"
+        '400':
+          description: Bad Request
+        '404':
+          description: Agreement Not Found
+     
+# templates ##########################
+
+  "/templates":
+    get:
+      tags:
+      - templates
+      description: Returns templates
+      summary: Returns all templates
+      operationId: getAlltemplates
+      produces:
+      - application/json
+      responses:
+        '200':
+          description: templates
+    post:
+      tags:
+      - templates
+      description: Creates a new template
+      summary: Creates a new template
+      operationId: createtemplate
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: template
+        required: true
+        schema:
+          "$ref": "#/definitions/Template"
+      responses:
+        '200':
+          description: template Created
+          schema:
+            "$ref": "#/definitions/Template"
+        '400':
+          description: Bad Request
+  "/templates/{id}":
+    get:
+      tags:
+      - templates
+      description: Returns a template
+      summary: Returns a template
+      operationId: gettemplate
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        description: template ID
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+          description: template get
+          schema:
+            "$ref": "#/definitions/Template"
+        '400':
+          description: Bad Request
+        '404':
+          description: template Not Found
+    delete:
+      tags:
+      - templates
+      description: Deletes a template
+      summary: Deletes a template
+      operationId: deletetemplate
+      produces:
+      - application/json
+      parameters:
+      - name: id
+        description: template ID
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+          description: template get
+          schema:
+            "$ref": "#/definitions/Template"
+        '400':
+          description: Bad Request
+        '404':
+          description: template Not Found
+
+# other ##########################
+
+  "/create-agreement":
+    post:
+      tags:
+      - agreements
+      description: Creates an agreement from a template
+      summary: Creates an agreement from a template
+      operationId: createagreementtemplate
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: agreement
+        required: true
+        schema:
+          "$ref": "#/definitions/Agreement"
+      responses:
+        '200':
+          description: Agreement Created
+          schema:
+            "$ref": "#/definitions/Agreement"
+        '400':
+          description: Bad Request
+  "/notifications":
+    post:
+      tags:
+      - agreements
+      description: Creates a notification
+      summary: Creates a notification
+      operationId: notification
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: agreement
+        required: true
+        schema:
+          "$ref": "#/definitions/Agreement"
+      responses:
+        '200':
+          description: template get
+          schema:
+            "$ref": "#/definitions/Agreement"
+        '400':
+          description: Bad Request
+        '404':
+          description: template Not Found
+        
+securityDefinitions:
+  e2co_auth:
+    type: oauth2
+    authorizationUrl: https://e2co/oauth/authorize
+    flow: implicit
+    scopes:
+      write:e2co: modify tasks and docks
+      read:e2co: read tasks and docks
+  api_key:
+    type: apiKey
+    name: api_key
+    in: header
+    
+    
+definitions:
+              
+  Agreement:
+    description: A representation of an agreement
+    type: object
+    properties:
+      id:
+        type: string
+        example: a01
+      name:
+        type: string
+        example: Agreement 01
+      state:
+        type: string
+        example: started
+      location:
+        type: string
+        example: location
+      details:
+        type: object
+        properties:
+          id:
+            type: string
+            example: a01
+          type:
+            type: string
+            example: agreement
+          name:
+            type: string
+            example: an-agreement-name
+          creation:
+            type: string
+            example: '2021-01-16T17:09:45Z'
+          expiration:
+            type: string
+            example: '2022-01-16T17:09:45Z'
+          provider:
+            type: object
+            properties:
+              id:
+                type: string
+                example: id
+              name:
+                type: string
+                example: name
+          client:
+            type: object
+            properties:
+              id:
+                type: string
+                example: id
+              name:
+                type: string
+                example: name
+          guarantees:
+            type: object
+            properties:
+              name:
+                type: string
+                example: TestGuarantee
+              constraint:
+                type: string
+                example: 'execution_time < 100'
+             
+  Provider:
+    description: A representation of a E2CO application (version 0.1)
+    type: object
+    properties:
+      name:
+        type: string
+        example: nginx-app
+      dock:
+        type: string
+        example: class
+      qos:
+        type: object
+        required:
+        - name
+        properties:
+          name:
+            type: string
+            example: KubeletTooManyPods
+          description:
+            type: string
+            example: scale down task if cluster pods > 50
+      replicas:
+        type: integer
+        example: 2
+      containers:
+        type: array
+        items:
+          type: object
+          required:
+          - name image ports
+          properties:
+            name:
+              type: string
+              example: nginx
+            image:
+              type: string
+              example: nginx
+            ports:
+              type: array
+              items:
+                type: object
+                properties:
+                  containerPort:
+                    type: integer
+                    example: 80
+                  hostPort:
+                    type: integer
+                    example: 80
+                  protocol:
+                    type: string
+                    example: tcp
+            volumes:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: name
+                  mounthPath:
+                    type: string
+                    example: mounthPath
+            environment:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: TEST_VALUE
+                  value:
+                    type: string
+                    example: 1.2.3
+                    
+  Template:
+    description: A representation of a E2CO Function
+    type: object
+    required:
+    - name qos containers
+    properties:
+      name:
+        type: string
+        example: helloworld
+      dock:
+        type: string
+        example: default
+      cluster:
+        type: string
+        example: maincluster
+      type:
+        type: string
+        example: function
+      runtime:
+        type: string
+        example: python2.7
+      timeout:
+        type: string
+        example: '180'
+      handler:
+        type: string
+        example: helloget.foo
+      functionType:
+        type: string
+        example: text
+      function:
+        type: string
+        example: |
+          def foo(event, context):
+              return "hello world"
+              
+  Violation:
+    description: A representation of a violation
+    type: object
+    properties:
+      idSLA:
+        type: string
+        example: slaID
+      idInfrastructure:
+        type: string
+        example: infrID
+      idApp:
+        type: string
+        example: appID
+      violation:
+        type: string
+        example: guarantee1
+      violationType:
+        type: string
+        example: Severe
+      description:
+        type: string
+        example: value expected, value monitored
+      date:
+        type: string
+        example: 2024-01-01T00:00:00Z
+  
+externalDocs:
+  description: Find out more about the CLOUDBUTTON project
+  url: https://cloudbutton.eu/

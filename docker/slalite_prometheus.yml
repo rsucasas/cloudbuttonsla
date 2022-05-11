@@ -1,0 +1,5 @@
+adapter: prometheus
+prometheusUrl: http://77.231.202.2:30990
+checkPeriod: 25s
+notifier: rabbitpushg
+rabbitMQ: amqp://cloudbutton:CloudButton2020@77.231.202.2:5672/

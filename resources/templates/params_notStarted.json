@@ -1,0 +1,8 @@
+{
+    "template_id": "cloudbutton_notStarted",
+    "parameters": {
+        "agreementname": "All functions must start",
+        "provider": { "id": "a-provider", "name": "A provider" },
+        "client": { "id": "a-client", "name": "A client" }
+    }
+}

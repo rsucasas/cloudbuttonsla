@@ -1,0 +1,17 @@
+{
+    "template_id": "cloudbutton",
+    "parameters": {
+        "agreementname": "cloudbutton02",
+        "provider": {
+            "id": "provider01",
+            "name": "A name of a provider"
+        },
+        "client": {
+            "id": "client01",
+            "name": "A name of a client"
+        },        
+        "UNITCOST": 0.00017,
+        "MAXCOST": 15000,
+        "TFACTOR": 2
+    }
+}

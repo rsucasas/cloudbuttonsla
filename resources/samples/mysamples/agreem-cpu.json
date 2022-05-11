@@ -1,0 +1,25 @@
+{
+    "id": "t-cpu",
+    "name": "CPU template",
+    "state": "started",
+    "details":{
+        "id": "t-cpu",
+        "type": "template",
+        "name": "CPU template",
+        "provider": { "id": "mf2c", "name": "mF2C Platform" },
+        "client": { "id": "c02", "name": "A client" },
+        "creation": "2020-01-07T10:09:45Z",
+        "variables": [
+            {
+                "name": "cpu_usage",
+                "metric": "100-(avg%20by%20(instance,cpu)(irate(node_cpu{job=\"node-exporter\",mode=\"idle\"}[5m]))*100)"
+            }
+        ],
+        "guarantees": [
+            {
+                "name": "CPU Guarantee",
+                "constraint": "cpu_usage <= 10"
+            }
+        ]
+    }
+}

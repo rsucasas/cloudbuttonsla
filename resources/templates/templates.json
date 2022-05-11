@@ -1,0 +1,122 @@
+[
+    {
+        "id": "cloudbutton_cloudbutton",
+        "name": "All constraints must meet",
+        "state": "started",
+        "details":{
+            "id": "cloudbutton_cloudbutton",
+            "type": "template",
+            "name": "All constraints must meet",
+            "provider": { "id": "a-provider", "name": "A provider" },
+            "client": { "id": "a-client", "name": "A client" },
+            "creation": "2020-01-01T17:09:45Z",
+            "expiration": "2023-01-01T17:09:45Z",
+            "variables": [
+                {
+                    "name": "totalNotStartedFunctions",
+                    "metric": "sum(job_total_calls)%20by%20(job_id,function_name)-count(function_start)%20by%20(job_id,function_name)"
+                },
+                {
+                    "name": "FunctionEndMax",
+                    "metric":"(function_start%20unless%20on(call_id)function_end)%2Bon(job_id)group_left()({{.TFACTOR}}*avg(function_end-function_start)by(job_id))"
+                },
+                {
+                    "name": "costFunctions",
+                    "metric":"sum(sum(function_end-function_start)by(job_id,exported_instance,function_name)%2Bsum(time()-(function_start%20unless%20on(call_id)function_end))by(job_id,exported_instance,function_name)*sum(job_runtime_memory)by(job_id,exported_instance,function_name))by(exported_instance)"
+                }                                
+            ],
+            "guarantees": [
+                {
+                    "name": "notStarted",
+                    "constraint": "totalNotStartedFunctions == 0"
+                },
+                {
+                    "name": "tooLong",
+                    "constraint": "timeNow() - FunctionEndMax < 0"
+                },
+                {
+                    "name": "tooCostly",
+                    "constraint": "{{.UNITCOST}}*costFunctions < {{.MAXCOST}}"
+                }
+            ]
+        }
+    },
+    {
+        "id": "cloudbutton_notStarted",
+        "name": "All functions must start",
+        "state": "started",
+        "details":{
+            "id": "cloudbutton_notStarted",
+            "type": "template",
+            "name": "All functions must start",
+            "provider": { "id": "a-provider", "name": "A provider" },
+            "client": { "id": "a-client", "name": "A client" },
+            "creation": "2020-01-01T17:09:45Z",
+            "expiration": "2023-01-01T17:09:45Z",
+            "variables": [
+                {
+                    "name": "totalNotStartedFunctions",
+                    "metric": "sum(job_total_calls)%20by%20(job_id,function_name)-count(function_start)%20by%20(job_id,function_name)"
+                }
+            ],
+            "guarantees": [
+                {
+                    "name": "notStarted",
+                    "constraint": "totalNotStartedFunctions == 0"
+                }
+            ]
+        }
+    },
+    {
+        "id": "cloudbutton_tooLong",
+        "name": "Limit functions that take longer than others in the same job",
+        "state": "started",
+        "details":{
+            "id": "cloudbutton_tooLong",
+            "type": "template",
+            "name": "Limit functions that take longer than others in the same job",
+            "provider": { "id": "a-provider", "name": "A provider" },
+            "client": { "id": "a-client", "name": "A client" },
+            "creation": "2020-01-01T17:09:45Z",
+            "expiration": "2023-01-01T17:09:45Z",
+            "variables": [
+                {
+                    "name": "FunctionEndMax",
+                    "metric":"(function_start%20unless%20on(call_id)function_end)%2Bon(job_id)group_left()({{.TFACTOR}}*avg(function_end-function_start)by(job_id))"
+                }
+            ],
+            "guarantees": [
+                {
+                    "name": "tooLong",
+                    "constraint": "timeNow() - FunctionEndMax < 0"
+                }
+            ]
+        }
+    },
+    {
+        "id": "cloudbutton_tooCostly",
+        "name": "Limit total cost of instance in IBM cloud",
+        "state": "started",
+        "details":{
+            "id": "cloudbutton_tooCostly",
+            "type": "template",
+            "name": "Limit total cost of instance in IBM cloud",
+            "provider": { "id": "a-provider", "name": "A provider" },
+            "client": { "id": "a-client", "name": "A client" },
+            "creation": "2020-01-01T17:09:45Z",
+            "expiration": "2023-01-01T17:09:45Z",
+            "variables": [
+                {
+                    "name": "costFunctions",
+                    "metric":"sum(sum(function_end-function_start)by(job_id,exported_instance,function_name)%2Bsum(time()-(function_start%20unless%20on(call_id)function_end))by(job_id,exported_instance,function_name)*sum(job_runtime_memory)by(job_id,exported_instance,function_name))by(exported_instance)"
+                }
+            ],
+            "guarantees": [
+                {
+                    "name": "tooCostly",
+                    "constraint": "{{.UNITCOST}}*costFunctions < {{.MAXCOST}}"
+                }
+            ]
+        }
+    }
+]

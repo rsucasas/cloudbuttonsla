@@ -1,0 +1,4 @@
+adapter: prometheus
+singlefile: true
+checkPeriod: 10
+notifier: rabbit

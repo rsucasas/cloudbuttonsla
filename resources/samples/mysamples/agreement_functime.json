@@ -1,0 +1,30 @@
+{
+    "id": "sla1",
+    "name": "function-time",
+    "state": "started",
+    "details":{
+        "id": "sla1",
+        "type": "agreement",
+        "name": "function-time",
+        "provider": { "id": "a-provider", "name": "A provider" },
+        "client": { "id": "a-client", "name": "A client" },
+        "creation": "2020-01-01T17:09:45Z",
+        "expiration": "2022-01-01T17:09:45Z",
+        "variables": [
+            {
+                "name": "startTime",
+                "metric": "sort(sum%20by%20(exported_instance,call_id,function_name,job_id)(function_start))"
+            },
+            {
+                "name": "endTime",
+                "metric": "sort(sum%20by%20(exported_instance,call_id,function_name,job_id)(function_end))" 
+            }
+        ],
+        "guarantees": [
+            {
+                "name": "tooLong",
+                "constraint": "(timeNow() - startTime < 0.02) && (timeNow() < endTime)"
+            }
+        ]
+    }
+}

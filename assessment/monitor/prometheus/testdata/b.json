@@ -1,0 +1,26 @@
+{
+    "id": "id",
+    "name": "Agreement",
+    "state": "started",
+    "details":{
+        "id": "id",
+        "type": "agreement",
+        "name": "Agreement",
+        "provider": { "id": "smart", "name": "SmartEdges" },
+        "client": { "id": "c", "name": "A client" },
+        "creation": "2018-01-16T17:09:45.0Z",
+        "expiration": "2029-01-17T17:09:45.0Z",
+        "variables": [
+            {
+                "name": "execution_time",
+                "metric": "hmm_compute_dbdump_time"
+            }
+        ],
+        "guarantees": [
+            {
+                "name": "execution_time",
+                "constraint": "execution_time < 50"
+            }
+        ]
+    }
+}

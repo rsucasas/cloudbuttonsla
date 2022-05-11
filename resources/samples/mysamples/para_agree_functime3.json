@@ -1,0 +1,15 @@
+{
+    "template_id": "t-sla3",
+    "parameters": {
+        "agreementname": "a-sla3",
+        "provider": {
+            "id": "provider01",
+            "name": "A name of a provider"
+        },
+        "client": {
+            "id": "client01",
+            "name": "A name of a client"
+        },        
+        "TIME": 1
+    }
+}
