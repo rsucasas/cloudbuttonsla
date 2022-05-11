@@ -22,6 +22,8 @@ import (
 	"SLALite/assessment/monitor"
 	"SLALite/assessment/notifier"
 	"SLALite/model"
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/Knetic/govaluate"
@@ -272,11 +274,24 @@ func evaluateExpression(expression *govaluate.EvaluableExpression, values amodel
 		evalues[key] = value.Value
 	}
 	result, err := expression.Evaluate(evalues)
-	log.Debugf("Evaluating expression '%v'=%v with values %v", expression, result, values)
+	log.Debugf("[evaluateExpression] Evaluating expression '%v'=%v with values %v", expression, result, values)
 
-	if err == nil && !result.(bool) {
-		return values, nil
+	if _, ok := result.(bool); ok {
+		if err == nil && !result.(bool) {
+			return values, nil
+		}
+	} else {
+		log.Error("[evaluateExpression] 'result' (from evaluation operation) is not a bool object.")
+
+		str := fmt.Sprintf("%v", result)
+		if strings.Contains(strings.ToLower(str), "false") {
+			log.Debugf("[evaluateExpression] 'result' contains a 'false' value.")
+			return values, nil
+		} else if strings.Contains(strings.ToLower(str), "true") {
+			log.Debugf("[evaluateExpression] 'result' contains a 'true' value.")
+		}
 	}
+
 	return nil, err
 }
 

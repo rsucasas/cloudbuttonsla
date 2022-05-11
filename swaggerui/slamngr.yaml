@@ -1,8 +1,8 @@
 swagger: '2.0'
 info:
   version: 0.1.1
-  title: SLA Framework REST API
-  description: The SLA Framework REST API is responsible for the management of SLAs
+  title: CLOUDBUTTON SLA REST API
+  description: The CLOUDBUTTON SLA REST API is responsible for the management of SLAs, Providers and Templates
 schemes:
 - http
 host: 77.231.202.2:8090

@@ -18,18 +18,20 @@ limitations under the License.
 package rabbitpushgnotifier
 
 import (
+	"encoding/json"
+	"fmt"
+	"strings"
+	"time"
+
 	assessment_model "SLALite/assessment/model"
 	"SLALite/assessment/notifier"
 	"SLALite/model"
-	"encoding/json"
-	"strings"
-
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
-	"github.com/streadway/amqp"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/push"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
+	"github.com/streadway/amqp"
 )
 
 const (
@@ -107,6 +109,7 @@ func (n RabbitpushgNotifier) NotifyViolations(agreement *model.Agreement, result
 
 	// Notify violations
 	log.Debug("Notifying violations of agreement [" + agreement.Id + "] ...")
+	funclistlen := 0
 	for i, v := range result.Violated {
 		if len(v.Violations) > 0 {
 			log.Debug("Failed guarantee: " + i)
@@ -126,13 +129,34 @@ func (n RabbitpushgNotifier) NotifyViolations(agreement *model.Agreement, result
 					body["Message"] = vi.Values
 					body["Fields"] = fields
 
-					if vi.Guarantee == "notStarted" {
+					// handle special cases
+					if strings.ToLower(vi.Guarantee) == "notstarted" {
+						// "notstarted"
+						log.Debugf("Processing 'notstarted' violation ...")
+
 						var funcList []string = ChecknotStartedFunctions(prometheusRootURL, vi.Values[0].Key, vi.Values[0].Resource)
+						funclistlen = len(funcList)
 						fields["notStarted"] = funcList
-						log.Infof("List of not started functions: %v", funcList)
+						log.Debugf("List of not started functions: %v", funcList)
+
+						// send one message to Kafka for each of the not started functions found
+						if funclistlen > 0 {
+							for _, v := range funcList {
+								log.Infof("Sending function violation [" + v + "] to RabbitMQ queue [" + q.Name + "] ... ")
+								sendNotStartedFunctionViolation(v, vi.AgreementId, vi.Guarantee, vi.Datetime, vi.Values)
+							}
+						}
+					} else if strings.Contains(strings.ToLower(vi.Guarantee), "toocostly") {
+						// "toocostly"
+						log.Debugf("Processing 'toocostly' violation ...")
+
 					}
+
 					jsonData, err := json.Marshal(body)
 					failOnError(err, "Failed to Marshal body")
+
+					log.Infof("Sending list of functions violation to RabbitMQ queue [" + q.Name + "] ... ")
+					fmt.Println(string(jsonData))
 
 					err = ch.Publish(
 						"",     // exchange
@@ -150,9 +174,12 @@ func (n RabbitpushgNotifier) NotifyViolations(agreement *model.Agreement, result
 				// Send information to Prometheus Pushgateway to record violation in Prometheus
 				// 	- instance: 		vi.Values[0].Key
 				// 	- function_name: 	vi.Values[0].Resource
+				//  - agreement and guarantee
+				//  - time of first violation: vi.Values[0].DateTime
+
 				log.Debug("Sending violation to Prometheus Pushgateway ...")
 				SendViolationToPrometheus(n.pushgURL, vi.AgreementId, vi.Guarantee, vi.Values[0].Key,
-					float64(vi.Values[0].DateTime.Unix()), vi.Values[0].Resource)
+					vi.Values[0].DateTime.String(), vi.Values[0].Resource, funclistlen)
 
 				//RemoveMetric(n.pushgURL, vi.Values[k].Key, vi.Values[k].Resource)
 			}
@@ -193,9 +220,44 @@ func ConnectQueue(rabURL string) error {
 	return err
 }
 
+// sendNotStartedFunctionViolation sends a not started function violation message to Rabbit
+func sendNotStartedFunctionViolation(v string, a string, g string, t time.Time, vs []model.MetricValue) {
+	fields := make(map[string]interface{})
+	fields["AgreementId"] = a
+	fields["Guarantee"] = g
+	fields["ViolationTime"] = t
+
+	body := make(map[string]interface{})
+	for i, _ := range vs {
+		vs[i].Key = v
+	}
+	body["Message"] = vs
+	body["Fields"] = fields
+
+	fields["notStarted"] = v
+
+	jsonData, err := json.Marshal(body)
+	failOnError(err, "Failed to Marshal body")
+
+	log.Infof("[sendNotStartedFunctionViolation] jsonData content:")
+	fmt.Println(string(jsonData))
+
+	err = ch.Publish(
+		"",     // exchange
+		q.Name, // routing key
+		false,  // mandatory
+		false,  // immediate
+		amqp.Publishing{
+			ContentType: "application/json",
+			Body:        jsonData,
+		})
+	failOnError(err, "Failed to publish a message")
+	log.Infof("Violation Message Published on queue %s", q.Name)
+}
+
 // SendViolationToPrometheus violations to prometheus via pushgateway
-func SendViolationToPrometheus(pushg string, agr string, gua string, key string, val float64, fun string) {
-	violationTime := prometheus.NewGauge(prometheus.GaugeOpts{
+func SendViolationToPrometheus(pushg string, agr string, gua string, key string, violtime string, fun string, listlen int) {
+	violationValue := prometheus.NewGauge(prometheus.GaugeOpts{
 		Namespace:   "CloudButton",
 		Subsystem:   "sla",
 		Name:        "QoS_violation",
@@ -203,22 +265,28 @@ func SendViolationToPrometheus(pushg string, agr string, gua string, key string,
 		ConstLabels: map[string]string{},
 	})
 
-	violationTime.Set(val)
+	violationValue.SetToCurrentTime()
+	if listlen > 0 {
+		violationValue.Set(float64(listlen))
+	}
 	var na = "NA"
 	if fun == "" {
 		fun = na
 	}
+
 	if err := push.New(pushg, "sla").
-		Collector(violationTime).
+		Collector(violationValue).
 		Grouping("agreement", agr).
 		Grouping("guarantee", gua).
 		Grouping("function_name", fun).
+		Grouping("violation_time", violtime).
 		Grouping("instance", key).
 		Push(); err != nil {
 		log.Error("Could not push violation time to Pushgateway: " + err.Error())
 	}
 }
 
+/*
 //RemoveMetric Remove the metric that caused a violation from PushGateway, after saving it in Prometheus
 func RemoveMetric(pushg string, delKey string, delRes string) {
 	log.Infof("Key: %s , Resource: %s", delKey, delRes)
@@ -237,8 +305,9 @@ func RemoveMetric(pushg string, delKey string, delRes string) {
 	}
 	defer res.Body.Close()
 	message, _ := ioutil.ReadAll(res.Body)
-	log.Debug("Response: " + string(message))*/
+	log.Debug("Response: " + string(message))
 }
+*/
 
 //Error traitment
 func failOnError(err error, msg string) {

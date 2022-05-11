@@ -75,7 +75,7 @@ const (
 	PrometheusPredictorPropertyName = "prometheusPredictor"
 	// HWSmoothingFactorPropertyName is the config property name of the Holt-Winters Smoothing Factor
 	HWSmoothingFactorPropertyName = "HWSmoothingFactor"
-	// HWTrendFactorPropertyName is the config property name of the Holt-Winters Smoothing Factor
+	// HWTrendFactorPropertyName is the config property name of the Holt-Winters Trend Factor
 	HWTrendFactorPropertyName = "HWTrendFactor"
 	// PLScalarPropertyName is the config property name of the Prediction Linear Scalar
 	PLScalarPropertyName = "PLScalar"
